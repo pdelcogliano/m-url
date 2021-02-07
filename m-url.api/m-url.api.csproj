@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>M_url.Api</RootNamespace>
+    <Authors>Paul Delcogliano</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\M-url.Data.Migrations\M-url.Data.Migrations.csproj" />
+    <ProjectReference Include="..\M-url.Data\M-url.Data.csproj" />
+    <ProjectReference Include="..\M-url.Domain\M-url.Domain.csproj" />
+    <ProjectReference Include="..\M-url.Models\M-url.Models.csproj" />
+    <ProjectReference Include="..\M-url.Services\M-url.Services.csproj" />
+  </ItemGroup>
+
+</Project>

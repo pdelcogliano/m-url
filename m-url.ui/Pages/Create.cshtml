@@ -1,0 +1,36 @@
+﻿@page
+@model CreateModel
+@{
+}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/site.css">
+    <title>M-Url</title>
+</head>
+<body>
+    <main>
+        <h1>M-Url</h1>
+    </main>
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger col-md-12"></div>
+        <div class="form-group col-md-12">
+            <label asp-for="Url" class="control-label">Url to shorten:</label>
+            <input asp-for="@Model.SlugModel.Url" class="form-control" />
+            <span asp-validation-for="Url" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <input type="submit" value="Create" class="btn btn-primary">
+        </div>
+    </form>
+    <section id="response" class="col-md-5">
+        @if (Model.SlugModel != null)
+        {
+        <span>Slug: @Model.SlugModel.Slug</span><br />
+        }
+    </section>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    }
+</body>
