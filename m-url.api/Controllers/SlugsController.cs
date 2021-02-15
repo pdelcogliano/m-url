@@ -71,6 +71,8 @@ namespace M_url.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<SlugDto>> CreateSlug([FromBody] SlugForCreationDto slugForCreation)
         {
+            _logger.LogInformation(string.Format($"creating new slug for URL: {slugForCreation.Url}"));
+
             // map to entity
             SlugEntity slugToAdd = new SlugEntity() { 
                 Url = slugForCreation.Url 
