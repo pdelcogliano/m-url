@@ -13,7 +13,7 @@ namespace M_url.Data
         public MurlContext(DbContextOptions<MurlContext> options)
           : base(options)
         {
-
+            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
         }
     }
 }
