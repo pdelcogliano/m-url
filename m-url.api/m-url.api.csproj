@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>M_url.Api</RootNamespace>
     <Authors>Paul Delcogliano</Authors>
+    <UserSecretsId>8698af97-7a11-41d2-a737-46071bec0c15</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

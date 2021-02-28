@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using M_url.Data.ResourceParameters;
+using M_url.Data.Helpers;
 using M_url.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +18,14 @@ namespace M_url.Data.Repositories
             _murlContext = murlContext ?? throw new ArgumentNullException(nameof(murlContext));
         }
 
-        public async Task<IEnumerable<SlugEntity>> GetAllSlugsAsync(SlugsResourceParameters slugsResourceParameter)
+        public async Task<PagedList<SlugEntity>> GetAllSlugsAsync(SlugsResourceParameters slugsResourceParameter)
         {
-            return await _murlContext.Slugs.ToListAsync();
+            if (slugsResourceParameter == null)
+                throw new ArgumentNullException(nameof(slugsResourceParameter));
+
+            var collection = _murlContext.Slugs as IQueryable<SlugEntity>;
+
+            return await PagedList<SlugEntity>.Create(collection, slugsResourceParameter.PageNumber, slugsResourceParameter.PageSize);
         }
 
         public async Task<IEnumerable<SlugEntity>> GetAllSlugsAsync(IEnumerable<string> slugs)

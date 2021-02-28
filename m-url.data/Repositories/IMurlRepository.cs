@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using M_url.Data.ResourceParameters;
+using M_url.Data.Helpers;
 using M_url.Domain.Entities;
 
 namespace M_url.Data.Repositories
 {
     public interface IMurlRepository
     {
-        Task<IEnumerable<SlugEntity>> GetAllSlugsAsync(SlugsResourceParameters slugsResourceParameters);
+        Task<PagedList<SlugEntity>> GetAllSlugsAsync(SlugsResourceParameters slugsResourceParameters);
 
         Task<IEnumerable<SlugEntity>> GetAllSlugsAsync(IEnumerable<string> slugs);
 

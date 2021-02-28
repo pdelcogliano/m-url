@@ -9,9 +9,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using M_url.Services;
 using M_url.Models;
+using M_url.Data.Helpers;
 using M_url.Data.Repositories;
 using M_url.Data.ResourceParameters;
 using M_url.Domain.Entities;
+using System.Text.Json;
+using System.Dynamic;
 
 namespace M_url.Api.Controllers
 {
@@ -29,21 +32,36 @@ namespace M_url.Api.Controllers
                 throw new ArgumentNullException(nameof(logger)); //.CreateLogger();
             _configuration = configuration ??
                 throw new ArgumentNullException(nameof(configuration));
-            _murlRepository =  murlRepository ??
+            _murlRepository = murlRepository ??
                 throw new ArgumentNullException(nameof(murlRepository));
         }
 
         // GET: api/murls>
-        [HttpGet]
+        [HttpGet(Name = "GetSlugs")]
         [HttpHead]
         public async Task<ActionResult<IEnumerable<SlugDto>>> GetSlugs([FromQuery] SlugsResourceParameters slugsResourceParameters)
         {
-            _logger.LogInformation(string.Format($"getting all URL values "));
+            _logger.LogInformation(string.Format($"GetSlugs [HTTP Get]: getting all URL values for page number: {slugsResourceParameters.PageNumber} and page size: {slugsResourceParameters.PageSize}"));
 
             // check if slug exists
-            IEnumerable<SlugEntity> slugs = await _murlRepository.GetAllSlugsAsync(slugsResourceParameters);
+            var slugs = await _murlRepository.GetAllSlugsAsync(slugsResourceParameters);
 
-            if (slugs == null)
+            var previousPageLink = slugs.HasPrevious ? CreateSlugsResourceUri(slugsResourceParameters, ResourceUriType.PreviousPage) : null;
+            var nextPageLink = slugs.HasNext ? CreateSlugsResourceUri(slugsResourceParameters, ResourceUriType.NextPage) : null;
+
+            var paginationMetaData = new 
+            { 
+                totalCount = slugs.TotalCount,
+                pageSize = slugs.PageSize,
+                currentPage = slugs.CurrentPage,
+                totalPages = slugs.TotalPages,
+                previousPageLink,
+                nextPageLink
+            };
+
+            Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
+
+            if (slugs == null || slugs.Count() == 0)
                 return new NotFoundObjectResult(new { message = "no URLs found." });
             else
                 return new OkObjectResult(slugs);
@@ -106,6 +124,30 @@ namespace M_url.Api.Controllers
         {
             Response.Headers.Add("Allow", "GET,OPTIONS,POST,PUT,PATCH,DELETE");
             return Ok();
+        }
+
+        private string CreateSlugsResourceUri(SlugsResourceParameters slugsResourceParameters, ResourceUriType type)
+        {
+            dynamic result = new ExpandoObject();
+            result.pageNumber = slugsResourceParameters.PageNumber;
+            result.pageSize = slugsResourceParameters.PageSize;
+            result.mainCategory = slugsResourceParameters.MainCategory;
+            result.searchQuery = slugsResourceParameters.SearchQuery;
+
+            switch (type)
+            {
+                case ResourceUriType.PreviousPage:
+                    result.pageNumber = slugsResourceParameters.PageNumber - 1;
+                    break;
+
+                case ResourceUriType.NextPage:
+                    result.pageNumber = slugsResourceParameters.PageNumber + 1;
+                    break;
+
+                default:
+                    break;
+            }
+            return Url.Link("GetSlugs", result);
         }
     }
 }
