@@ -23,9 +23,9 @@ namespace M_url.Data.Repositories
             if (slugsResourceParameter == null)
                 throw new ArgumentNullException(nameof(slugsResourceParameter));
 
-            var collection = _murlContext.Slugs as IQueryable<SlugEntity>;
-
-            return await PagedList<SlugEntity>.Create(collection, slugsResourceParameter.PageNumber, slugsResourceParameter.PageSize);
+            IQueryable<SlugEntity> collection = _murlContext.Slugs;
+            var orderedCollection = collection.OrderBy(c => c.Url);
+            return await PagedList<SlugEntity>.Create(orderedCollection, slugsResourceParameter.PageNumber, slugsResourceParameter.PageSize);
         }
 
         public async Task<IEnumerable<SlugEntity>> GetAllSlugsAsync(IEnumerable<string> slugs)
