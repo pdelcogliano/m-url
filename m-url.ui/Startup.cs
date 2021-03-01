@@ -20,6 +20,12 @@ namespace M_url.Ui
         {
             services.AddRazorPages();
             services.AddHttpClient();
+            services.AddAntiforgery(o =>
+            {
+                o.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict;
+                o.Cookie.HttpOnly = true;
+                o.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +44,16 @@ namespace M_url.Ui
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("Referrer-Policy", "no-referrer");
+                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'");
+                context.Response.Headers.Add("Permissions-Policy", "");
+                await next();
+            });
 
             app.UseRouting();
 
