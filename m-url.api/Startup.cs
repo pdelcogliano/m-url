@@ -42,7 +42,12 @@ namespace M_url.Api
               options.UseSqlServer(connectionString, x => x.MigrationsAssembly("M-url.Data.Migrations")));
             services.AddScoped<IMurlRepository, MurlRepository>();
 
-            services.AddAntiforgery(o => o.SuppressXFrameOptionsHeader = true);
+            services.AddAntiforgery(o => 
+            { 
+                o.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict; 
+                o.Cookie.HttpOnly = true; 
+                o.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
