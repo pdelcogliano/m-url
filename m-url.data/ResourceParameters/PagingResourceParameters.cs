@@ -2,7 +2,7 @@ using System;
 
 namespace M_url.Data.ResourceParameters
 {
-    public class PagingResourceParameters
+    public class PagingResourceParameters : IPagingResourceParameters
     {
         const int maxPageSize = 20;
 

@@ -25,7 +25,7 @@ namespace M_url.Data.Repositories
 
             IQueryable<SlugEntity> collection = _murlContext.Slugs;
             var orderedCollection = collection.OrderBy(c => c.Url);
-            return await PagedList<SlugEntity>.Create(orderedCollection, slugsResourceParameter.PageNumber, slugsResourceParameter.PageSize);
+            return await PagedList<SlugEntity>.Create(orderedCollection, slugsResourceParameter);
         }
 
         public async Task<IEnumerable<SlugEntity>> GetAllSlugsAsync(IEnumerable<string> slugs)

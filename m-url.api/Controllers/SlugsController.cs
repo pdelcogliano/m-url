@@ -44,20 +44,8 @@ namespace M_url.Api.Controllers
             _logger.LogInformation(string.Format($"GetSlugs [HTTP Get]: getting all URL values for page number: {slugsResourceParameters.PageNumber} and page size: {slugsResourceParameters.PageSize}"));
 
             // check if slug exists
-            var slugs = await _murlRepository.GetAllSlugsAsync(slugsResourceParameters);
-
-            var previousPageLink = slugs.HasPrevious ? CreateSlugsResourceUri(slugsResourceParameters, ResourceUriType.PreviousPage) : null;
-            var nextPageLink = slugs.HasNext ? CreateSlugsResourceUri(slugsResourceParameters, ResourceUriType.NextPage) : null;
-
-            var paginationMetaData = new 
-            { 
-                totalCount = slugs.TotalCount,
-                pageSize = slugs.PageSize,
-                currentPage = slugs.CurrentPage,
-                totalPages = slugs.TotalPages,
-                previousPageLink,
-                nextPageLink
-            };
+            PagedList<SlugEntity> slugs = await _murlRepository.GetAllSlugsAsync(slugsResourceParameters);
+            var paginationMetaData = CreatePaginationMetaData(slugs, slugsResourceParameters);
 
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
 
@@ -128,26 +116,42 @@ namespace M_url.Api.Controllers
 
         private string CreateSlugsResourceUri(SlugsResourceParameters slugsResourceParameters, ResourceUriType type)
         {
-            dynamic result = new ExpandoObject();
-            result.pageNumber = slugsResourceParameters.PageNumber;
-            result.pageSize = slugsResourceParameters.PageSize;
-            result.mainCategory = slugsResourceParameters.MainCategory;
-            result.searchQuery = slugsResourceParameters.SearchQuery;
+            dynamic routevalues = new ExpandoObject();
+            routevalues.pageNumber = slugsResourceParameters.PageNumber;
+            routevalues.pageSize = slugsResourceParameters.PageSize;
+            routevalues.mainCategory = slugsResourceParameters.MainCategory;
+            routevalues.searchQuery = slugsResourceParameters.SearchQuery;
 
             switch (type)
             {
                 case ResourceUriType.PreviousPage:
-                    result.pageNumber = slugsResourceParameters.PageNumber - 1;
+                    routevalues.pageNumber = slugsResourceParameters.PageNumber - 1;
                     break;
 
                 case ResourceUriType.NextPage:
-                    result.pageNumber = slugsResourceParameters.PageNumber + 1;
+                    routevalues.pageNumber = slugsResourceParameters.PageNumber + 1;
                     break;
 
                 default:
                     break;
             }
-            return Url.Link("GetSlugs", result);
+            return Url.Link("GetSlugs", routevalues);
+        }
+
+        private object CreatePaginationMetaData(PagedList<SlugEntity> slugs, SlugsResourceParameters slugsResourceParameters)
+        {
+            string previousPageLink = slugs.HasPrevious ? CreateSlugsResourceUri(slugsResourceParameters, ResourceUriType.PreviousPage) : null;
+            string nextPageLink = slugs.HasNext ? CreateSlugsResourceUri(slugsResourceParameters, ResourceUriType.NextPage) : null;
+
+            return new
+            {
+                totalCount = slugs.TotalCount,
+                pageSize = slugs.PageSize,
+                currentPage = slugs.CurrentPage,
+                totalPages = slugs.TotalPages,
+                previousPageLink,
+                nextPageLink
+            };
         }
     }
 }

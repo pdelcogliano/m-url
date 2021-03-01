@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace M_url.Data.Helpers
@@ -30,14 +29,14 @@ namespace M_url.Data.Helpers
             AddRange(items);
         }
 
-        public static async Task<PagedList<T>> Create(IQueryable<T> source, int pageNumber, int pageSize)
+        public static async Task<PagedList<T>> Create(IQueryable<T> source, ResourceParameters.IPagingResourceParameters paging)
         {
             var count = source.Count();
             var items = await source
-              .Skip((pageNumber - 1) * pageSize)
-              .Take(pageSize).ToListAsync();
+              .Skip((paging.PageNumber - 1) * paging.PageSize)
+              .Take(paging.PageSize).ToListAsync();
 
-            return new PagedList<T>(items, count, pageNumber, pageSize);
+            return new PagedList<T>(items, count, paging.PageNumber, paging.PageSize);
         }
     }
 }
