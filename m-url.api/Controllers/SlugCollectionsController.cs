@@ -7,11 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Http;
 
 namespace M_url.Api.Controllers
 {
     [ApiController]
     [Route("api/slugcollections")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     public class SlugCollectionsController : ControllerBase
     {
         private readonly IMurlRepository _murlRepository;
@@ -22,7 +26,14 @@ namespace M_url.Api.Controllers
         }
 
         //  api.slugcollections/(slug1, slug2)
+        /// <summary>
+        /// Returns a collection of URLs
+        /// </summary>
+        /// <param name="slugs"></param>
+        /// <returns></returns>
         [HttpGet("({slugs})", Name = "GetSlugCollection")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> GetSlugCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<string> slugs)
         {
             IEnumerable<SlugEntity> slugCollection = await _murlRepository.GetAllSlugsAsync(slugs);
@@ -33,7 +44,13 @@ namespace M_url.Api.Controllers
             return Ok(slugCollection);
         }
 
+        /// <summary>
+        /// Creates slugs in bulk
+        /// </summary>
+        /// <param name="slugsToAdd"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateSlugCollection(IEnumerable<SlugForCreationDto> slugsToAdd)
         {
             List<SlugEntity> slugsToReturn = new List<SlugEntity>();
