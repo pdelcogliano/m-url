@@ -20,8 +20,8 @@ using System.Net.Mime;
 namespace M_url.Api.Controllers
 {
     [Route("api/slugs")]
-    [Produces(MediaTypeNames.Application.Json)]
-    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiController]
     public class SlugsController : ControllerBase
     {

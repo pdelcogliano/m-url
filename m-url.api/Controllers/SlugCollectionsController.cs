@@ -17,8 +17,8 @@ namespace M_url.Api.Controllers
 {
     [ApiController]
     [Route("api/slugcollections")]
-    [Produces(MediaTypeNames.Application.Json)]
-    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     public class SlugCollectionsController : ControllerBase
     {
         private readonly ILogger<SlugCollectionsController> _logger;
@@ -79,9 +79,12 @@ namespace M_url.Api.Controllers
 
             foreach (var slug in slugsToAdd)
             {
+                if (string.IsNullOrWhiteSpace(slug.Slug))
+                    slug.Slug = NanoidService.Create(slugLength);
+
                 SlugEntity newSlug = new SlugEntity
                 {
-                    Slug = string.IsNullOrWhiteSpace(slug.Slug) ? NanoidService.Create(slugLength) : slug.Slug,
+                    Slug = slug.Slug,
                     Url = slug.Url
                 };
                 _murlRepository.AddSlug(newSlug);

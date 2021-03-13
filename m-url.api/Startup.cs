@@ -38,7 +38,6 @@ namespace M_url.Api
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "m_url API",
-                    Version = "v1",
                     Description = "",
                     Contact = new OpenApiContact
                     {
