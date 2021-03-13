@@ -11,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using M_url.Data;
 using M_url.Data.Repositories;
+using System.Reflection;
+using System.IO;
 
 namespace M_url.Api
 {
@@ -33,8 +35,30 @@ namespace M_url.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "M_url.Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "m_url API",
+                    Version = "v1",
+                    Description = "",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Paul Delcogliano",
+                        Email = "pdelco@gmail.com",
+                        Url = new Uri("https://github.com/pdelcogliano")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT License",
+                        Url = new Uri("https://opensource.org/licenses/MIT")
+                    }
+                });
+
+                // generate the XML docs that'll drive the swagger docs
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+
             // use DI to create the singleton class responsible for storing data
             //services.AddSingleton<IDataAccess, MurlDataAccess>();
             string connectionString = Configuration["ConnectionStrings:MurlsDBConnectionString"];

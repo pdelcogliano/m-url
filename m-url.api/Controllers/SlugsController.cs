@@ -15,10 +15,13 @@ using M_url.Data.ResourceParameters;
 using M_url.Domain.Entities;
 using System.Text.Json;
 using System.Dynamic;
+using System.Net.Mime;
 
 namespace M_url.Api.Controllers
 {
     [Route("api/slugs")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
     [ApiController]
     public class SlugsController : ControllerBase
     {
@@ -37,8 +40,15 @@ namespace M_url.Api.Controllers
         }
 
         // GET: api/murls>
+        /// <summary>
+        /// Returns a URL for the given parameters
+        /// </summary>
+        /// <param name="slugsResourceParameters"></param>
+        /// <returns></returns>
         [HttpGet(Name = "GetSlugs")]
         [HttpHead]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<SlugDto>>> GetSlugs([FromQuery] SlugsResourceParameters slugsResourceParameters)
         {
             _logger.LogInformation(string.Format($"GetSlugs [HTTP Get]: getting all URL values for page number: {slugsResourceParameters.PageNumber} and page size: {slugsResourceParameters.PageSize}"));
@@ -56,7 +66,14 @@ namespace M_url.Api.Controllers
         }
 
         // GET: api/slugs/{slug}>
+        /// <summary>
+        /// Returns a URL for a given slug
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
         [HttpGet("{slug}", Name = "GetSlug")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<SlugDto>> GetSlug(string slug)
         {
             _logger.LogInformation(string.Format($"getting URL values for {slug}"));
@@ -74,7 +91,13 @@ namespace M_url.Api.Controllers
         }
 
         // POST api/slugs
+        /// <summary>
+        /// Creates a slug
+        /// </summary>
+        /// <param name="slugForCreation"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<SlugDto>> CreateSlug([FromBody] SlugForCreationDto slugForCreation)
         {
             _logger.LogInformation(string.Format($"creating new slug for URL: {slugForCreation.Url}"));
@@ -93,7 +116,14 @@ namespace M_url.Api.Controllers
         }
 
         // Delete api/slugs/{slug}
+        /// <summary>
+        /// Deletes a slug
+        /// </summary>
+        /// <param name="slug"></param>
+        /// <returns></returns>
         [HttpDelete("{slug}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<SlugDto>> DeleteSlug(string slug)
         {
             SlugEntity slugToDelete = await _murlRepository.GetSlugAsync(slug);
