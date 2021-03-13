@@ -48,7 +48,7 @@ namespace M_url.Data.Repositories
             if (newSlug == null)
                 throw new ArgumentNullException(nameof(newSlug));
 
-                _murlContext.Slugs.Add(newSlug);
+            _murlContext.Slugs.Add(newSlug);
         }
 
         public void DeleteSlug(SlugEntity slug)

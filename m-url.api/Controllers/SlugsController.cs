@@ -103,7 +103,8 @@ namespace M_url.Api.Controllers
             _logger.LogInformation(string.Format($"creating new slug for URL: {slugForCreation.Url}"));
 
             // map to entity
-            SlugEntity slugToAdd = new SlugEntity() { 
+            SlugEntity slugToAdd = new SlugEntity
+            { 
                 Url = slugForCreation.Url 
             };
             
