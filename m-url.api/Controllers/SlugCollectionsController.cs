@@ -39,8 +39,17 @@ namespace M_url.Api.Controllers
         /// <summary>
         /// Returns a collection of URLs
         /// </summary>
-        /// <param name="slugs"></param>
-        /// <returns></returns>
+        /// <param name="slugs">list of slugs to retrieve</param>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     Get /api/slugscollection/(d25tRx, fN5jpz)
+        ///
+        /// </remarks>
+        /// <returns>IEnumerable of slugs</returns>
+        /// <response code="200">If all requested items are found</response>
+        /// <response code="400">If slugs parameter is missing</response>
+        /// <response code="404">If number of records found doesn't equal number of records requested</response>
         [HttpGet("({slugs})", Name = "GetSlugCollection")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,7 +72,22 @@ namespace M_url.Api.Controllers
         /// Creates slugs in bulk
         /// </summary>
         /// <param name="slugsToAdd"></param>
-        /// <returns></returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST api/slugcollections
+        ///     [
+        ///       {
+        ///          "url": "http://www.site1.com"
+        ///       },
+        ///       {
+        ///          "url": "http://www.site2.com"
+        ///       }
+        ///     ]
+        /// </remarks>
+        /// <returns>IEnumerable of newly created slugs</returns>
+        /// <response code="201">If items were added successfully</response>
+        /// <response code="400">If no values are provided in the slugsToAdd parameter</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
