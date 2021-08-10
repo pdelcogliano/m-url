@@ -33,11 +33,32 @@ namespace M_url.Api
                 setupAction.ReturnHttpNotAcceptable = true;     // sends 406 for unsupported output formats, i.e. zip or other formats
             }).AddXmlDataContractSerializerFormatters();        // adds support XML output format if specified in the accept header by the client consumer
 
+            //services.AddAuthentication(opt => {
+            //    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //}).AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = true,
+            //            ValidateAudience = true,
+            //            ValidateLifetime = true,
+            //            ValidateIssuerSigningKey = true,
+
+            //            ValidIssuer = "http://localhost:5000",
+            //            ValidAudience = "http://localhost:5000",
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
+            //        };
+            //    });
+
+            services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "m_url API",
+                    Version = "v1",
                     Description = "",
                     Contact = new OpenApiContact
                     {
@@ -51,6 +72,8 @@ namespace M_url.Api
                         Url = new Uri("https://opensource.org/licenses/MIT")
                     }
                 });
+                c.OperationFilter<RemoveVersionParameterFilter>();
+                c.DocumentFilter<ReplaceVersionWithExactValueInPathFilter>();
 
                 // generate the XML docs that'll drive the swagger docs
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -96,7 +119,7 @@ namespace M_url.Api
             });
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>M-url.Api</name>
+    </assembly>
+    <members>
+        <member name="M:M_url.Api.Controllers.SlugCollectionsController.GetSlugCollection(System.Collections.Generic.IEnumerable{System.String})">
+             <summary>
+             Returns a collection of URLs
+             </summary>
+             <param name="slugs">list of slugs to retrieve</param>
+             <remarks>
+             Sample request:
+            
+                 Get /api/slugscollection/(d25tRx, fN5jpz)
+            
+             </remarks>
+             <returns>IEnumerable of slugs</returns>
+             <response code="200">If all requested items are found</response>
+             <response code="400">If slugs parameter is missing</response>
+             <response code="404">If number of records found doesn't equal number of records requested</response>
+        </member>
+        <member name="M:M_url.Api.Controllers.SlugCollectionsController.CreateSlugCollection(System.Collections.Generic.IEnumerable{M_url.Models.SlugForCreationDto})">
+             <summary>
+             Creates slugs in bulk
+             </summary>
+             <param name="slugsToAdd"></param>
+             <remarks>
+             Sample request:
+            
+                 POST api/slugcollections
+                 [
+                   {
+                      "url": "http://www.site1.com"
+                   },
+                   {
+                      "url": "http://www.site2.com"
+                   }
+                 ]
+             </remarks>
+             <returns>IEnumerable of newly created slugs</returns>
+             <response code="201">If items were added successfully</response>
+             <response code="400">If no values are provided in the slugsToAdd parameter</response>
+        </member>
+        <member name="M:M_url.Api.Controllers.SlugsController.GetSlugs(M_url.Data.ResourceParameters.SlugsResourceParameters)">
+            <summary>
+            Returns a URL for the given parameters
+            </summary>
+            <param name="slugsResourceParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:M_url.Api.Controllers.SlugsController.GetSlug(System.String)">
+            <summary>
+            Returns a URL for a given slug
+            </summary>
+            <param name="slug"></param>
+            <returns></returns>
+        </member>
+        <member name="M:M_url.Api.Controllers.SlugsController.CreateSlug(M_url.Models.SlugForCreationDto)">
+            <summary>
+            Creates a slug
+            </summary>
+            <param name="slugForCreation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:M_url.Api.Controllers.SlugsController.DeleteSlug(System.String)">
+            <summary>
+            Deletes a slug
+            </summary>
+            <param name="slug"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

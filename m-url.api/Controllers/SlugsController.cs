@@ -19,10 +19,11 @@ using System.Net.Mime;
 
 namespace M_url.Api.Controllers
 {
-    [Route("api/slugs")]
+    [Route("api/v{version:apiVersion}/slugs")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiController]
+    [ApiVersion("1.0")]
     public class SlugsController : ControllerBase
     {
         private readonly ILogger<SlugsController> _logger;
@@ -49,6 +50,7 @@ namespace M_url.Api.Controllers
         [HttpHead]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult<IEnumerable<SlugDto>>> GetSlugs([FromQuery] SlugsResourceParameters slugsResourceParameters)
         {
             _logger.LogInformation(string.Format($"GetSlugs [HTTP Get]: getting all URL values for page number: {slugsResourceParameters.PageNumber} and page size: {slugsResourceParameters.PageSize}"));
@@ -59,7 +61,7 @@ namespace M_url.Api.Controllers
 
             Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetaData));
 
-            if (slugs == null || slugs.Count() == 0)
+            if (slugs == null || slugs.Count == 0)
                 return new NotFoundObjectResult(new { message = "no URLs found." });
             else
                 return new OkObjectResult(slugs);
@@ -74,6 +76,7 @@ namespace M_url.Api.Controllers
         [HttpGet("{slug}", Name = "GetSlug")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult<SlugDto>> GetSlug(string slug)
         {
             _logger.LogInformation(string.Format($"getting URL values for {slug}"));
@@ -98,12 +101,13 @@ namespace M_url.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult<SlugDto>> CreateSlug([FromBody] SlugForCreationDto slugForCreation)
         {
             _logger.LogInformation(string.Format($"creating new slug for URL: {slugForCreation.Url}"));
 
             // map to entity
-            SlugEntity slugToAdd = new SlugEntity
+            SlugEntity slugToAdd = new()
             { 
                 Url = slugForCreation.Url 
             };
@@ -125,6 +129,7 @@ namespace M_url.Api.Controllers
         [HttpDelete("{slug}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult<SlugDto>> DeleteSlug(string slug)
         {
             SlugEntity slugToDelete = await _murlRepository.GetSlugAsync(slug);
@@ -139,6 +144,7 @@ namespace M_url.Api.Controllers
         }
 
         [HttpOptions]
+        [MapToApiVersion("1.0")]
         public IActionResult GetMurlOptions()
         {
             Response.Headers.Add("Allow", "GET,OPTIONS,POST,PUT,PATCH,DELETE");

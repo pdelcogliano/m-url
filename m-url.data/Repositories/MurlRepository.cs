@@ -65,7 +65,7 @@ namespace M_url.Data.Repositories
             catch(Exception e)
             {
                 // todo: log error
-                throw e;
+                throw;
             }
         }
 

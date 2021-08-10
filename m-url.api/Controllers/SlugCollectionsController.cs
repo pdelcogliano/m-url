@@ -2,23 +2,24 @@
 using M_url.Data.Repositories;
 using M_url.Domain.Entities;
 using M_url.Models;
+using M_url.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net.Mime;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using M_url.Services;
+using System.Threading.Tasks;
 
 namespace M_url.Api.Controllers
 {
     [ApiController]
-    [Route("api/slugcollections")]
+    [Route("api/v{version:apiVersion}/slugcollections")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
+    [ApiVersion("1.0")]
     public class SlugCollectionsController : ControllerBase
     {
         private readonly ILogger<SlugCollectionsController> _logger;
@@ -54,6 +55,7 @@ namespace M_url.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> GetSlugCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<string> slugs)
         {
             if (slugs == null)
@@ -91,14 +93,15 @@ namespace M_url.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [MapToApiVersion("1.0")]
         public async Task<ActionResult> CreateSlugCollection(IEnumerable<SlugForCreationDto> slugsToAdd)
         {
             _logger.LogInformation($"bulk add new slugs");
 
-            if (slugsToAdd == null || slugsToAdd.Count() == 0)
+            if (slugsToAdd == null || ! slugsToAdd.Any())
                 return BadRequest();
             
-            List<SlugEntity> slugsToReturn = new List<SlugEntity>();
+            List<SlugEntity> slugsToReturn = new();
             int slugLength = _configuration.GetValue<short>("SlugLength", 5);
 
             foreach (var slug in slugsToAdd)
@@ -106,7 +109,7 @@ namespace M_url.Api.Controllers
                 if (string.IsNullOrWhiteSpace(slug.Slug))
                     slug.Slug = NanoidService.Create(slugLength);
 
-                SlugEntity newSlug = new SlugEntity
+                SlugEntity newSlug = new()
                 {
                     Slug = slug.Slug,
                     Url = slug.Url
