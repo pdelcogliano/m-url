@@ -19,11 +19,11 @@ using System.Net.Mime;
 
 namespace M_url.Api.Controllers
 {
+    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/slugs")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [ApiController]
-    [ApiVersion("1.0")]
     public class SlugsController : ControllerBase
     {
         private readonly ILogger<SlugsController> _logger;

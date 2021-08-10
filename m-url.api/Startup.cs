@@ -88,6 +88,13 @@ namespace M_url.Api
               options.UseSqlServer(connectionString, x => x.MigrationsAssembly("M-url.Data.Migrations")));
             services.AddScoped<IMurlRepository, MurlRepository>();
 
+            services.AddApiVersioning(v => 
+            {
+                v.DefaultApiVersion = new ApiVersion(1, 0);
+                v.AssumeDefaultVersionWhenUnspecified = true;
+                v.ReportApiVersions = true;
+            });
+
             services.AddAntiforgery(o => 
             { 
                 o.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict; 

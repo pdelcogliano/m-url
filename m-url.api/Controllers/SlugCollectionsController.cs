@@ -15,11 +15,11 @@ using System.Threading.Tasks;
 
 namespace M_url.Api.Controllers
 {
-    [ApiController]
+    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/slugcollections")]
     [Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
     [Consumes(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-    [ApiVersion("1.0")]
+    [ApiController]
     public class SlugCollectionsController : ControllerBase
     {
         private readonly ILogger<SlugCollectionsController> _logger;
