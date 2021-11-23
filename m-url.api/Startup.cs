@@ -14,6 +14,7 @@ using M_url.Data.Repositories;
 using System.Reflection;
 using System.IO;
 using Serilog.Core;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace M_url.Api
 {
@@ -63,9 +64,9 @@ namespace M_url.Api
                     Description = "",
                     Contact = new OpenApiContact
                     {
-                        Name = "Paul Delcogliano",
-                        Email = "pdelco@gmail.com",
-                        Url = new Uri("https://github.com/pdelcogliano")
+                        Name = Configuration["SupportName"],
+                        Email = Configuration["SupportEmail"],
+                        Url = new Uri(Configuration["GitHubURL"])
                     },
                     License = new OpenApiLicense
                     {
@@ -102,6 +103,16 @@ namespace M_url.Api
                 o.Cookie.HttpOnly = true; 
                 o.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
             });
+
+            // Registers required services for health checks
+            services.AddHealthChecks()
+                // Add a health check for a SQL Server database
+                //.AddCheck(
+                //    "M-URLDB-check",
+                //    new SqlConnectionHealthCheck(connectionString),
+                //    HealthStatus.Unhealthy,
+                //    new string[] { "m-urldb" })
+                .AddSqlServer(connectionString);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -133,6 +144,7 @@ namespace M_url.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/api/v{version:apiVersion}/health");
             });
         }
     }
